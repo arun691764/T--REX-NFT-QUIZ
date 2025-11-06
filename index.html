@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T-REX Project Quiz</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: #333;
+    text-align: center;
+    padding: 40px;
+  }
+  h1 {
+    font-size: 2.5em;
+    color: black;
+    margin-bottom: 10px;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+  #quiz-container {
+    display: none;
+  }
+  .question {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    color: #000;
+  }
+  .option {
+    display: block;
+    background: #f2f2f2;
+    margin: 8px auto;
+    padding: 10px;
+    width: 60%;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .option:hover {
+    background: #ddd;
+  }
+  .correct {
+    background-color: #a4f7a4;
+  }
+  .wrong {
+    background-color: #f7a4a4;
+  }
+  #result {
+    display: none;
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  #retry-btn {
+    display: none;
+    margin-top: 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #retry-btn:hover {
+    background-color: #333;
+  }
+  #welcome-screen {
+    display: block;
+  }
+  #start-btn {
+    margin-top: 25px;
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  #trophy {
+    font-size: 2em;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div id="welcome-screen">
+  <h1>🦖 Welcome to T-REX Quiz! 🦖</h1>
+  <h2>Learn about the T-Rex and T-Rex NFT</h2>
+  <button id="start-btn">Start Quiz</button>
+</div>
+
+<div id="quiz-container">
+  <div id="question-container"></div>
+  <div id="options-container"></div>
+</div>
+
+<div id="result"></div>
+<button id="retry-btn">Retry Quiz</button>
+
+<script>
+const quizData = [
+  {
+    question: "A. What is the T-REX Project mainly focused on?",
+    options: ["AI tools", "NFT ecosystem", "Gaming", "Web3 wallet"],
+    correct: 1
+  },
+  {
+    question: "B. Which blockchain is T-REX NFTs built on?",
+    options: ["Ethereum", "Polygon", "Solana", "BNB Chain"],
+    correct: 0
+  },
+  {
+    question: "C. What does the T-REX logo represent?",
+    options: ["Strength and evolution", "Random design", "Old fossils", "Space mission"],
+    correct: 0
+  },
+  {
+    question: "D. What can users design with the Rexy NFT?",
+    options: ["Smart contracts", "Merch or art", "Trading bots", "Websites"],
+    correct: 1
+  },
+  {
+    question: "E. What does owning a T-REX NFT provide?",
+    options: ["Access to exclusive art events", "Airdrop rewards", "Both A and B", "Nothing"],
+    correct: 2
+  },
+  {
+    question: "F. The T-REX community values?",
+    options: ["Creativity and fun", "Strict rules", "Private data", "None"],
+    correct: 0
+  },
+  {
+    question: "G. What’s one unique feature of T-REX NFTs?",
+    options: ["They can evolve", "They play music", "They glow at night", "They change names"],
+    correct: 0
+  },
+  {
+    question: "H. What color theme best represents T-REX?",
+    options: ["Red", "Green", "Black & White", "Blue"],
+    correct: 2
+  },
+  {
+    question: "I. What makes T-REX different from other NFT projects?",
+    options: ["Dynamic creativity", "No community", "Centralized system", "High gas fees"],
+    correct: 0
+  },
+  {
+    question: "J. What’s the goal of the T-REX ecosystem?",
+    options: ["Empower digital artists", "Build DeFi apps", "Create meme coins", "Develop games"],
+    correct: 0
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const questionContainer = document.getElementById("question-container");
+const optionsContainer = document.getElementById("options-container");
+const quizContainer = document.getElementById("quiz-container");
+const resultContainer = document.getElementById("result");
+const retryBtn = document.getElementById("retry-btn");
+const startBtn = document.getElementById("start-btn");
+const welcomeScreen = document.getElementById("welcome-screen");
+
+const questionColors = ["#000", "#1a73e8", "#ff5722", "#388e3c", "#9c27b0", "#e91e63", "#2196f3", "#795548", "#607d8b", "#f57c00"];
+
+startBtn.addEventListener("click", () => {
+  welcomeScreen.style.display = "none";
+  quizContainer.style.display = "block";
+  loadQuestion();
+});
+
+function loadQuestion() {
+  const q = quizData[current];
+  questionContainer.innerHTML = `<div class='question' style='color:${questionColors[current]}'>${q.question}</div>`;
+  optionsContainer.innerHTML = "";
+  q.options.forEach((opt, index) => {
+    const btn = document.createElement("div");
+    btn.classList.add("option");
+    btn.innerText = opt;
+    btn.addEventListener("click", () => selectOption(btn, index));
+    optionsContainer.appendChild(btn);
+  });
+}
+
+function selectOption(selected, index) {
+  const q = quizData[current];
+  const allOptions = document.querySelectorAll(".option");
+  allOptions.forEach(opt => opt.style.pointerEvents = "none");
+
+  if (index === q.correct) {
+    selected.classList.add("correct");
+    score++;
+  } else {
+    selected.classList.add("wrong");
+    allOptions[q.correct].classList.add("correct");
+  }
+
+  setTimeout(() => {
+    current++;
+    if (current < quizData.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }, 1000);
+}
+
+function showResult() {
+  quizContainer.style.display = "none";
+  resultContainer.style.display = "block";
+  retryBtn.style.display = "inline-block";
+
+  let trophy = "";
+  if (score >= 8) trophy = "🏆 Gold Trophy!";
+  else if (score >= 5) trophy = "🥈 Silver Trophy!";
+  else trophy = "🔁 Try Again!";
+
+  resultContainer.innerHTML = `You scored ${score}/${quizData.length}<br>${trophy}`;
+}
+
+retryBtn.addEventListener("click", () => {
+  current = 0;
+  score = 0;
+  resultContainer.style.display = "none";
+  retryBtn.style.display = "none";
+  quizContainer.style.display = "block";
+  loadQuestion();
+});
+</script>
+</body>
+</html>
